@@ -64,6 +64,7 @@ class CPU {
      * Advances the CPU one cycle
      */
     tick() {
+        const IR;
         // Load the instruction register (IR--can just be a local variable here)
         // from the memory address pointed to by the PC. (I.e. the PC holds the
         // index into memory of the instruction that's about to be executed
