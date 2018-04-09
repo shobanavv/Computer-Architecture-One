@@ -5,6 +5,14 @@
 /**
  * Class for simulating a simple Computer (CPU & memory)
  */
+const ADD = 0b10101000;
+const AND = 0b10110011;
+const DIV = 0b10101011;
+const LDI = 0b10011001;
+const MUL = 0b10101010;
+const PRN = 0b01000011;
+const HLT = 0b00000001;
+
 class CPU {
 
     /**
@@ -55,9 +63,24 @@ class CPU {
     alu(op, regA, regB) {
         switch (op) {
             case 'MUL':
-
-                // !!! IMPLEMENT ME
+            // !!! IMPLEMENT ME
+                this.reg[regA] = this.reg[regA] * this.reg[regB];
                 break;
+            case 'ADD':
+                this.reg[regA] = this.reg[regA] + this.reg[regB];
+                break;
+            case 'DIV':
+                if (this.reg[regB] === 0) {
+                    return 'ERROR';
+                    break;
+                }
+                this.reg[regA] = this.reg[regA] / this.reg[regB];
+                break;
+            case 'AND':
+                this.reg[regA] = this.reg[regA] && this.reg[regB];
+                break;
+            default:
+                break;                
         }
     }
 
@@ -74,7 +97,7 @@ class CPU {
         // right now.)
 
         // !!! IMPLEMENT ME
-        IR = this.reg.PC;
+        IR = this.ram.read(this.reg.PC);
         // Debugging output
         //console.log(`${this.reg.PC}: ${IR.toString(2)}`);
 
@@ -88,22 +111,33 @@ class CPU {
        
         // !!! IMPLEMENT ME
         operandA = this.ram.read(this.reg.PC + 1);
-        operandB = this.ram.read(this.ram.)PC + 2);
+        operandB = this.ram.read(this.ram.PC + 2);
+
+        const LDI = (register, value) => {
+            this.reg[register] = value;
+        }
         // Increment the PC register to go to the next instruction. Instructions
         // can be 1, 2, or 3 bytes long. Hint: the high 2 bits of the
         // instruction byte tells you how many bytes follow the instruction byte
         // for any particular instruction.
-        switch(operand) {
-            case AA: 
-                
+        switch(IR) {
+            case ADD: 
+                this.alu('ADD', operandA, operandB);
                 break;
-                
-            case B:
-            break;
-            case CC:
-            break;
-            case DDD:
-            break;
+            case HLT:
+                this.stopClock();
+                break;
+            case MUL:
+                this.alu('MUL', operandA, operandB);
+                break;
+            case LDI:
+                this.LDI(operandA, operandB);
+                break;
+            case PRN:
+
+                console.log(IR);
+                break;
+
         }
         // !!! IMPLEMENT ME
     }
