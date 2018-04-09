@@ -55,6 +55,7 @@ class CPU {
     alu(op, regA, regB) {
         switch (op) {
             case 'MUL':
+
                 // !!! IMPLEMENT ME
                 break;
         }
@@ -64,14 +65,16 @@ class CPU {
      * Advances the CPU one cycle
      */
     tick() {
-        const IR;
+        let IR;
+        let operandA;
+        let operandB;
         // Load the instruction register (IR--can just be a local variable here)
         // from the memory address pointed to by the PC. (I.e. the PC holds the
         // index into memory of the instruction that's about to be executed
         // right now.)
 
         // !!! IMPLEMENT ME
-
+        IR = this.reg.PC;
         // Debugging output
         //console.log(`${this.reg.PC}: ${IR.toString(2)}`);
 
@@ -82,14 +85,26 @@ class CPU {
 
         // Execute the instruction. Perform the actions for the instruction as
         // outlined in the LS-8 spec.
-
+       
         // !!! IMPLEMENT ME
-
+        operandA = this.ram.read(this.reg.PC + 1);
+        operandB = this.ram.read(this.ram.)PC + 2);
         // Increment the PC register to go to the next instruction. Instructions
         // can be 1, 2, or 3 bytes long. Hint: the high 2 bits of the
         // instruction byte tells you how many bytes follow the instruction byte
         // for any particular instruction.
-        
+        switch(operand) {
+            case AA: 
+                
+                break;
+                
+            case B:
+            break;
+            case CC:
+            break;
+            case DDD:
+            break;
+        }
         // !!! IMPLEMENT ME
     }
 }
