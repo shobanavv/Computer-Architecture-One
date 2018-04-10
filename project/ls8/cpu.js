@@ -111,11 +111,9 @@ class CPU {
        
         // !!! IMPLEMENT ME
         operandA = this.ram.read(this.reg.PC + 1);
-        operandB = this.ram.read(this.ram.PC + 2);
+        operandB = this.ram.read(this.reg.PC + 2);
 
-        const LDI = (register, value) => {
-            this.reg[register] = value;
-        }
+        
         // Increment the PC register to go to the next instruction. Instructions
         // can be 1, 2, or 3 bytes long. Hint: the high 2 bits of the
         // instruction byte tells you how many bytes follow the instruction byte
@@ -131,15 +129,17 @@ class CPU {
                 this.alu('MUL', operandA, operandB);
                 break;
             case LDI:
-                this.LDI(operandA, operandB);
+                this.reg[operandA] = operandB;
                 break;
             case PRN:
-
-                console.log(IR);
+                console.log(this.reg[operandA]);
                 break;
 
         }
         // !!! IMPLEMENT ME
+        let operandCount = (IR >>> 6) & 0b11;
+        let totalInstructionLen = operandCount + 1;
+        this.reg.PC = totalInstructionLen;
     }
 }
 
