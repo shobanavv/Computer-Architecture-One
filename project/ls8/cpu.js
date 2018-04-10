@@ -64,6 +64,7 @@ class CPU {
         switch (op) {
             case 'MUL':
             // !!! IMPLEMENT ME
+                
                 this.reg[regA] = this.reg[regA] * this.reg[regB];
                 break;
             case 'ADD':
@@ -99,7 +100,7 @@ class CPU {
         // !!! IMPLEMENT ME
         IR = this.ram.read(this.reg.PC);
         // Debugging output
-        //console.log(`${this.reg.PC}: ${IR.toString(2)}`);
+        console.log(`${this.reg.PC}: ${IR.toString(2)}`);
 
         // Get the two bytes in memory _after_ the PC in case the instruction
         // needs them.
@@ -139,7 +140,7 @@ class CPU {
         // !!! IMPLEMENT ME
         let operandCount = (IR >>> 6) & 0b11;
         let totalInstructionLen = operandCount + 1;
-        this.reg.PC = totalInstructionLen;
+        this.reg.PC += totalInstructionLen;
     }
 }
 
