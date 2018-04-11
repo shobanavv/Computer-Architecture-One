@@ -1,6 +1,7 @@
 const RAM = require('./ram');
 const CPU = require('./cpu');
-
+const fileName = process.argv[2];
+const fs = require('fs');
 /**
  * Load an LS8 program into memory
  *
@@ -31,17 +32,43 @@ function loadMemory() {
     // for (let i = 0; i < program.length; i++) {
     //    cpu.poke(i, parseInt(program[i], 2));
     // }
-    const fileName = process.argv[2];
-    let lineReader = require('readline').createInterface({
-        input: require('fs').createReadStream(`./${fileName}`)
-      });
-      let counter = 0;
-      lineReader.on('line', function (line) {
-        cpu.poke(counter, parseInt(line, 2));
-        //console.log('Line from file:',counter, line);
-        counter++;
-      });
+    // const fileName = process.argv[2];
+    // let counter = 0;
+
+    // let lineReader = require('readline').createInterface({
+    //     input: require('fs').createReadStream(`./${fileName}`)
+    //   });
+    //   lineReader.on('line', function (line) {
+    //     cpu.poke(counter, parseInt(line, 2));
+    //     //console.log('Line from file:',counter, line);
+    //     counter++;
+    //   });
+    //   lineReader.on('close', () => {
+    //     cpu.startClock();
+    //     lineReader.close();
+    //   })
       //end of file
+      const program = [];
+      const loadFile = fs.readFileSync(`./${fileName}`, {encoding: 'utf-8'}).split('\n');
+    
+      for (let line of loadFile) {
+        const comment = line.indexOf('#');
+    
+        if (comment !== -1) {
+          line = line.substr(0, comment);
+        }
+        line = line.trim();
+    
+        if (line === '') {
+          continue;
+        }
+        program.push(line);
+      }
+    
+      // Load the program into the CPU's memory a byte at a time
+      for (let i = 0; i < program.length; i++) {
+        cpu.poke(i, parseInt(program[i], 2));
+      }
 }
 
 /**
