@@ -12,6 +12,8 @@ const LDI = 0b10011001;
 const MUL = 0b10101010;
 const PRN = 0b01000011;
 const HLT = 0b00000001;
+const POP = 0b01001100;
+const PUSH = 0b01001101;
 
 class CPU {
 
@@ -134,6 +136,17 @@ class CPU {
                 break;
             case PRN:
                 console.log(this.reg[operandA]);
+                break;
+            case POP:
+                this.reg[operandA] = this.ram.read(this.reg[7]);
+                this.reg[7]++;
+                break;
+            case PUSH:
+                this.reg[7]--;
+                this.ram.write(this.reg[7],this.reg[operandA]);
+                break;
+            default: 
+                this.stopClock();
                 break;
 
         }

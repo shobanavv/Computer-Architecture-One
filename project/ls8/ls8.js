@@ -38,9 +38,10 @@ function loadMemory() {
       let counter = 0;
       lineReader.on('line', function (line) {
         cpu.poke(counter, parseInt(line, 2));
-        console.log('Line from file:',counter, line);
+        //console.log('Line from file:',counter, line);
         counter++;
       });
+      //end of file
 }
 
 /**
