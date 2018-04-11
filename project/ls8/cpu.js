@@ -15,6 +15,7 @@ const HLT = 0b00000001;
 const POP = 0b01001100;
 const PUSH = 0b01001101;
 const CALL = 0b01001000;
+const RET = 0b00001001;
 
 class CPU {
 
@@ -152,10 +153,15 @@ class CPU {
             this.ram.write(this.reg[7], this.reg[operandA]);
         };
 
-        // const handle_CALL = (register) => {
-        //     this.reg[7]--;
-        //     this.ram.write(this.reg[7], )
-        // }
+        const handle_CALL = (operandA) => {
+            handle_PUSH((this.reg.PC + 1));
+            this.reg.PC = this.reg[operandA];
+        };
+
+        const handle_RET = (operandA) => {
+            this.reg.PC = this.ram.read(this.reg[7]);
+            handle_POP(operandA);
+        };
 
         const branchTable = {
             [LDI]: handle_LDI,
@@ -165,6 +171,8 @@ class CPU {
             [ADD]: handle_ADD,
             [POP]: handle_POP,
             [PUSH]: handle_PUSH,
+            [CALL]: handle_CALL,
+            [RET]: handle_RET,
         };
 
         branchTable[IR](operandA, operandB);
