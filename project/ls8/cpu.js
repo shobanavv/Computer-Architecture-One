@@ -17,6 +17,8 @@ const PUSH = 0b01001101;
 const CALL = 0b01001000;
 const RET = 0b00001001;
 
+const SP = 7;
+
 class CPU {
 
     /**
@@ -29,6 +31,8 @@ class CPU {
         
         // Special-purpose registers
         this.reg.PC = 0; // Program Counter
+
+        this.reg[SP] = 0xf4; // start with empty stack
     }
 	
     /**
@@ -92,9 +96,9 @@ class CPU {
      * Advances the CPU one cycle
      */
     tick() {
-        let IR;
-        let operandA;
-        let operandB;
+        let IR = this.ram.read(this.reg.PC);;
+        let operandA = this.ram.read(this.reg.PC + 1);
+        let operandB = this.ram.read(this.reg.PC + 2);
 
         // Load the instruction register (IR--can just be a local variable here)
         // from the memory address pointed to by the PC. (I.e. the PC holds the
@@ -102,7 +106,6 @@ class CPU {
         // right now.)
 
         // !!! IMPLEMENT ME
-        IR = this.ram.read(this.reg.PC);
         // Debugging output
         // console.log(`${this.reg.PC}: ${IR.toString(2)}`);
 
@@ -115,8 +118,7 @@ class CPU {
         // outlined in the LS-8 spec.
        
         // !!! IMPLEMENT ME
-        operandA = this.ram.read(this.reg.PC + 1);
-        operandB = this.ram.read(this.reg.PC + 2);
+
 
         // Increment the PC register to go to the next instruction. Instructions
         // can be 1, 2, or 3 bytes long. Hint: the high 2 bits of the
@@ -144,23 +146,24 @@ class CPU {
         };
 
         const handle_POP = (operandA) => {
-            this.reg[operandA] = this.ram.read(this.reg[7]);
-            this.reg[7]++;
+            this.reg[operandA] = this.ram.read(this.reg[SP]);
+            this.reg[SP]++;
         };
 
         const handle_PUSH = (operandA) => {
-            this.reg[7]--;
-            this.ram.write(this.reg[7], this.reg[operandA]);
+            this.reg[SP]--;
+            this.ram.write(this.reg[SP], this.reg[operandA]);
         };
 
         const handle_CALL = (operandA) => {
-            handle_PUSH((this.reg.PC + 1));
+            this.reg[SP]--;
+            this.ram.write(this.reg[SP], this.reg.PC + 2);
             this.reg.PC = this.reg[operandA];
         };
 
-        const handle_RET = (operandA) => {
-            this.reg.PC = this.ram.read(this.reg[7]);
-            handle_POP(operandA);
+        const handle_RET = () => {
+            this.reg.PC = this.ram.read(this.reg[SP]);
+            this.reg[SP]++;
         };
 
         const branchTable = {
@@ -206,9 +209,15 @@ class CPU {
         //         break;
         // }
         // !!! IMPLEMENT ME
-        let operandCount = (IR >>> 6) & 0b11;
-        let totalInstructionLen = operandCount + 1;
-        this.reg.PC += totalInstructionLen;
+        if ( IR !== CALL && IR !== RET) {
+            let operandCount = (IR >>>6) & 0b11;
+            let totalInstructionLen = operandCount +1;
+            this.reg.PC += totalInstructionLen;
+        }
+
+        // let operandCount = (IR >>> 6) & 0b11;
+        // let totalInstructionLen = operandCount + 1;
+        // this.reg.PC += totalInstructionLen;
     }
 }
 
