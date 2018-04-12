@@ -16,9 +16,16 @@ const POP = 0b01001100;
 const PUSH = 0b01001101;
 const CALL = 0b01001000;
 const RET = 0b00001001;
+const INT = 0b01001010;
+const IRET = 0b00001011;
 
-const SP = 7;
+const SP = 7; // Stack Pointer
+const IM = 5; // Interrupt Mask
+const IS = 6; // Interrupt Status
 
+let maskedInterrupts = this.reg[IM] && this.reg[IS];
+
+const FL = 4;
 class CPU {
 
     /**
@@ -33,6 +40,8 @@ class CPU {
         this.reg.PC = 0; // Program Counter
 
         this.reg[SP] = 0xf4; // start with empty stack
+
+        this.intReg = new Array(8).fill(0);
     }
 	
     /**
@@ -58,6 +67,9 @@ class CPU {
         clearInterval(this.clock);
     }
 
+    maskedInterruptsCheck() {
+        
+    }
     /**
      * ALU functionality
      *
@@ -164,6 +176,18 @@ class CPU {
         const handle_RET = () => {
             this.reg.PC = this.ram.read(this.reg[SP]);
             this.reg[SP]++;
+        };
+
+        const handle_INT = (register) => {
+            this.reg[IS] = this.intReg[register];
+        };
+
+        const handle_IRET = () => {
+            for (let i = 6; i >= 0; i--) {
+                handle_POP(this.reg[i]);
+            };
+            handle_POP(this.reg[FL]);
+            // this.reg.PC = ??
         };
 
         const branchTable = {
